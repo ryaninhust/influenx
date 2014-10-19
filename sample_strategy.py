@@ -19,8 +19,7 @@ def read_graph_with_status(nodes_file, edges_file, status_file):
     for n in nodes_list:
         model.g.node[n]['status'] = 'activated'
 
-    # return a directed graph
-    return model.g
+    return model
 
 
 def write_result(selected_nodes_list, selected_nodes_file):
@@ -39,7 +38,7 @@ if __name__ == '__main__':
     selected_nodes_file = sys.argv[6]
     time_limit_in_sec = sys.argv[7]  
 
-    g = read_graph_with_status(nodes_file, edge_file, status_file)  
+    model = read_graph_with_status(nodes_file, edge_file, status_file)  
   
     #......
 
