@@ -6,6 +6,7 @@ def read_graph_with_status(nodes_file, edges_file, status_file):
 	# generate the graph
 	model = DiffusionModel.MultiPlayerLTModel(nodes_file, edges_file, player_num=1)
 
+
 	# store the status of nodes in graph
 	nodes_list = list()
 	with open(status_file,'r') as f:
