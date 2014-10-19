@@ -14,7 +14,7 @@ def read_graph_with_status(nodes_file, edges_file, status_file):
             break
         nodes = line.strip().split()
         for n in nodes:
-        nodes_list.append(int(n))
+            nodes_list.append(int(n))
     for n in nodes_list:
         model.g.node[n]['status'] = 'activated'
 
