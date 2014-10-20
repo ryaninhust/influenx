@@ -6,7 +6,8 @@ def cal_non_cover_spread(graph, non_cover_node, filter_result):
     out_neighbors = get_node_out_neighbors(non_cover_node)
     spread = 1
     for out in out_neighbors:
-        m = graph.edge[non_cover_node][out]['weight'] * filter_result[non_cover_node]
+        m = (graph.edge[non_cover_node][out]['weight'] *
+             filter_result[(non_cover_node, out)])
         spread += m
     return spread
 
@@ -20,12 +21,12 @@ def cal_simpath(graph, eta, l, k, simpath_spread_method, back_trace):
     filter_result = {}
 
     for u in vertex_cover_set:
-        U = V_C | get_node_in_neighbors(u)
+        U = V_C & get_node_in_neighbors(u)
         theta_u = simpath_spread_method(graph, set([u,]), eta, U)
         global_result[u] = theta_u
         for v in U:
             theta_V_v_u = simpath_spread_method(graph, set([u,v]), eta, U)
-            filter_result[u] = theta_V_v_u
+            filter_result[(v, u)] = theta_V_v_u
         heapq.heappush(CELF_Q, (theta_u, u))
 
     for v in V_C:
