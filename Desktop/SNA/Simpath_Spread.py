@@ -18,8 +18,8 @@ def simpath_spread(S,eta,U,G,b):
 	Sigma = 0	# Initilize the Sigma
 	V = G.nodes()	# V is all nodes set
 	for u in S:
-		temp = list(set(V) - set(S))	# V minus S
-		temp.append(u)	# V minus S append u
+		temp = set(V) - set(S)	# V minus S
+		temp.add(u)	# V minus S append u
 		Sigma += back_track(u,eta,temp,U,G,b)	# Each node in S calls BackTrack
 	return Sigma
 def back_track(u,eta,W,U,G,b):
