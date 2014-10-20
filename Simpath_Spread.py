@@ -23,7 +23,7 @@ class Stack():
 			self.top += 1
 			self.stack.append(element)
 		else:
-			print 'Wrong'
+			print ('Wrong')
 	def Last(self):
 		return self.stack[self.top]
 	def Empty(self):
@@ -36,7 +36,7 @@ class Stack():
 			return False
 	def IsFull(self):
 		if self.top == self.size:
-			print 'Overflow of Stack'
+			print ('Overflow of Stack')
 			return True
 		else:
 			return False
@@ -48,9 +48,9 @@ class Stack():
 	def Reverse_Stack(self):
 		if self.IsNull() != True:
 			for i in range(self.top + 1):
-				print '[element]',self.stack[i]
+				print ('[element]',self.stack[i])
 		else:
-			print 'Wrong size'
+			print ('Wrong size')
 
 def Simpath_Spread(S,eta,U,G,b):
 	"""Compute the spread of S.
@@ -93,22 +93,22 @@ def BackTrack(u,eta,W,U,G,b):
 	Q  = Stack()	# Stack that maintain the current nodes on the path
     # Initilize the Q,spd,pp and D
 	Q.push(u)
-	spd = 1 	 
- 	pp = 1 	# Maintain the weight of the current path
+	spd = 1
+	pp = 1 	# Maintain the weight of the current path
  	# Produce D
- 	D = {}	# D[x] maintains the out-neighbors of x
- 	for i in G.nodes():
+	D = {}	# D[x] maintains the out-neighbors of x
+	for i in G.nodes():
 		D[i] = []
- 	while Q.IsNull() != True:
- 		[Q,D,spd,pp] = Forward(Q,D,spd,pp,eta,W,U,G,b)
- 		u = Q.Last()
- 		Q.pop()
- 		print '^^^^^',D,u,spd,pp
- 		if Q.IsNull() != True:	# When the Q is Null,stop the process
+	while Q.IsNull() != True:
+		[Q,D,spd,pp] = Forward(Q,D,spd,pp,eta,W,U,G,b)
+		u = Q.Last()
+		Q.pop()
+		print ('^^^^^',D,u,spd,pp)
+		if Q.IsNull() != True:	# When the Q is Null,stop the process
  			v = Q.Last()
  			pp = float(pp)/ b[v][u]
- 		print b[v][u],pp
- 	return spd
+		print (b[v][u],pp)
+	return spd
 def Forward(Q,D,spd,pp,eta,W,U,G,b):
 	"""Extends the last element x in a depth-first fashion
 
@@ -145,7 +145,7 @@ def Forward(Q,D,spd,pp,eta,W,U,G,b):
 					D[x].append(y)	# Add y to x
 					x = Q.Last()
 					flag = 0
-		print 'value',spd,pp
+		print ('value',spd,pp)
 		i += 1
 	return Q,D,spd,pp
 def Read_Graph(filename):
@@ -183,7 +183,7 @@ def main():
 	S = ['x']	# Start seed
 	eta = 0
 	U = []
-	print Simpath_Spread(S,eta,U,G,b)
+	print (Simpath_Spread(S,eta,U,G,b))
 
 if __name__ == '__main__':
 	main()
