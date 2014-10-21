@@ -2,6 +2,7 @@ import networkx as nx
 
 def simpath_spread(S,eta,U,G,b):
 	Sigma = 0	# Initilize the Sigma
+	result = 0
 	V = G.nodes()	# V is all nodes set
 	spd_dict = {}	# D[x] maintains the out-neighbors of x
 	for j in G.nodes():
@@ -12,8 +13,9 @@ def simpath_spread(S,eta,U,G,b):
 	for u in S:
 		temp = set(V) - set(S)	# V minus S
 		temp.add(u)	# V minus S append u
-		[Sigma,spd_dict] = back_track(u,eta,temp,U,G,b,spd_dict)
+		[result,spd_dict] = back_track(u,eta,temp,U,G,b,spd_dict)
 		#Sigma += Sigma	# Each node in S calls BackTrack
+		Sigma += result
 	return Sigma,spd_dict
 def back_track(u,eta,W,U,G,b,spd_dict):
 	Q  = list()	# Stack that maintain the current nodes on the path
@@ -107,9 +109,10 @@ def main():
 	[G,b] = read_graph('')
 	# Initilize the value
 	S = ['0']	# Start seed
-	eta = 0
+	eta = 0.1
 	U = ['1']
-	print (simpath_spread(S,eta,U,G,b))
-
+	pp = []
+	pp = simpath_spread(S,eta,U,G,b)
+	print (pp[0])
 if __name__ == '__main__':
 	main()
