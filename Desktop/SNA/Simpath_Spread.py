@@ -1,43 +1,21 @@
 import networkx as nx
 
 def simpath_spread(S,eta,U,G,b):
-	"""Compute the spread of S.
-
-    Inputs:
-        S: The Seed Set
-        eta: A pruning threshold
-        U: The empty set temporarily and will use in optimization
-       	G: The Graph
-       	b: The influence weight of node, e.p b[u][v] is the influence u on v
-    Returns:
-        Sigma(S): The expected number of nodes reachable from S
-
-    Raises:
-        IOError: An error occurred accessing the S object.
-    """
 	Sigma = 0	# Initilize the Sigma
 	V = G.nodes()	# V is all nodes set
+	spd_dict = {}	# D[x] maintains the out-neighbors of x
+	for j in G.nodes():
+		spd_dict[j] = {}
+	for k in G.nodes():
+		for p in G.nodes():
+			spd_dict[k][p] = 0	#Initilize the Edge Weight Value
 	for u in S:
 		temp = set(V) - set(S)	# V minus S
 		temp.add(u)	# V minus S append u
-		Sigma += back_track(u,eta,temp,U,G,b)	# Each node in S calls BackTrack
-	return Sigma
-def back_track(u,eta,W,U,G,b):
-	"""Enumerates all simple paths starting from u.
-
-    Inputs:
-        u: A start node the simple path
-        eta: A pruning threshold
-        W: A given set of nodes
-        U: The empty set temporarily and will use in optimization
-        G: The Graph
-        b: The influence weight of node, e.p b[u][v] is the influence u on v
-    Returns:
-        spd: Track the spread of node u in the subgraph induced by W
-
-    Raises:
-        IOError: ?2
-    """
+		[Sigma,spd_dict] = back_track(u,eta,temp,U,G,b,spd_dict)
+		#Sigma += Sigma	# Each node in S calls BackTrack
+	return Sigma,spd_dict
+def back_track(u,eta,W,U,G,b,spd_dict):
 	Q  = list()	# Stack that maintain the current nodes on the path
     # Initilize the Q,spd,pp and D
 	Q.append(u)
@@ -48,40 +26,24 @@ def back_track(u,eta,W,U,G,b):
 	for i in G.nodes():
 		D[i] = []
 	while Q:
-		[Q,D,spd,pp] = forward(Q,D,spd,pp,eta,W,U,G,b)
+		[Q,D,spd,pp,spd_dict] = forward(Q,D,spd,spd_dict,pp,eta,W,U,G,b,u)
 		u = Q.pop()		
 		#print ('D',u,spd,pp)
 		if Q:	# When the Q is Null,stop the process
 			v = Q[-1]
 			pp = float(pp)/ b[v][u]
 		#print (b[v][u],pp)
-	return spd
-def forward(Q,D,spd,pp,eta,W,U,G,b):
-	"""Extends the last element x in a depth-first fashion
-
-    Inputs:
-    	Q: Stack that maintain the current nodes on the path
-    	D: D[x] maintains the out-neighbors of x
-    	spd: Track the spread of node in the subgraph induced by W
-    	pp: Maintain the weight of the current path
-    	eta: A pruning threshold
-    	W: A given set of nodes
-    	U: The empty set temporarily and will use in optimization
-    	G: The Graph
-    	b: The influence weight of node, e.p b[u][v] is the influence u on v
-    Returns:
-        [Q,D,spd,pp]: The update of Q,D,spd,pp
-
-    Raises:
-        IOError: ?2
-    """
+	return spd,spd_dict
+def forward(Q,D,spd,spd_dict,pp,eta,W,U,G,b,u):
 	x  = Q[-1]
 	i = 0
-	sss = True
-	while sss:
+	flag = True
+	v = ''
+	s = ''
+	while flag:
 		ys = G.successors(x)
 		if len(ys) == 0:
-			sss = False
+			flag = False
 			break
 		while len(ys) > 0:
 			y = ys[i]
@@ -95,26 +57,24 @@ def forward(Q,D,spd,pp,eta,W,U,G,b):
 					spd += pp
 					D[x].append(y)	# Add y to x
 					x = Q[-1]
+					#print U
+					for v in U:
+						if v not in Q:
+							#print 'v=',v,W-set(v)
+							for s in W - set(v):
+								#print 'w',W - set(v),s,u,spd_dict[s][u]
+								spd_dict[s][u] += pp
+								#print 'ss',spd_dict[s][u]
 					i = 0
 					break
 			if i == len(ys):
-				sss = False
+				flag = False
+				#print 'here',spd_dict
 				break
-	return Q,D,spd,pp
+	return Q,D,spd,pp,spd_dict
 
 
 def read_graph(filename):
-	"""Read graph from file.
-
-    Inputs:
-        filename: A filename
-    Returns:
-        G: The formed graph
-        b: The influence weight of node, e.p b[u][v] is the influence u on v 
-
-    Raises:
-        IOError: An error occurred reading the file.
-    """
 	G = nx.DiGraph()
 	'''G.add_edge('x','y',influence = .3)
 	G.add_edge('x','z',influence = .4)
@@ -146,9 +106,9 @@ def read_graph(filename):
 def main():
 	[G,b] = read_graph('')
 	# Initilize the value
-	S = ['0','1','2','3','100','102','103']	# Start seed
-	eta = 0.001
-	U = []
+	S = ['0']	# Start seed
+	eta = 0
+	U = ['1']
 	print (simpath_spread(S,eta,U,G,b))
 
 if __name__ == '__main__':
