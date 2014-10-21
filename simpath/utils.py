@@ -10,12 +10,12 @@ def get_node_in_neighbors(graph, node):
 def get_node_out_neighbors(graph, node):
     """Coolect one node out neighors"""
     out_edges = graph.out_edges(node)
-    return set([out_edge[0]] for out_edge in out_edges)
+    return set([out_edge[0] for out_edge in out_edges])
 
 
 def write_celf_q(celf_q, path):
     with open(path, 'w') as celf_q_file:
-        celf_q_file.writelines('%f %s\n' % t for t in celf_q)
+        celf_q_file.writelines('%f %d\n' % t for t in celf_q)
 
 
 def read_celf_q(path, selected_node_list):
