@@ -1,6 +1,7 @@
 import heapq
 from .utils import get_node_in_neighbors, get_node_out_neighbors
 from .vertex_cover import find_vertex_cover
+from .simpath_spread import simpath_spread, back_track
 
 def cal_non_cover_spread(graph, non_cover_node, filter_result):
     out_neighbors = get_node_out_neighbors(non_cover_node)
@@ -12,7 +13,7 @@ def cal_non_cover_spread(graph, non_cover_node, filter_result):
     return spread
 
 
-def init_simpath(graph, eta, simpath_spread_method, back_trace):
+def init_simpath(graph, eta):
     celf_q = []
     vertex_cover_set = find_vertex_cover(graph)
     V = set(graph.nodes())
@@ -21,7 +22,7 @@ def init_simpath(graph, eta, simpath_spread_method, back_trace):
 
     for u in vertex_cover_set:
         U = V_C & get_node_in_neighbors(u)
-        theta_u, filter_result[u]= simpath_spread_method(graph, set([u,]), eta, U)
+        theta_u, filter_result[u]= simpath_spread(graph, set([u,]), eta, U)
         heapq.heappush(celf_q, (theta_u, u))
 
     for v in V_C:
@@ -31,7 +32,7 @@ def init_simpath(graph, eta, simpath_spread_method, back_trace):
     return celf_q
 
 
-def common_simpath(graph, celf_q, l, k, simpath_spread_method, back_trace, eta):
+def common_simpath(graph, celf_q, l, k, eta):
     S = set()
     spd = 0
     V = set(graph.nodes())
@@ -49,8 +50,8 @@ def common_simpath(graph, celf_q, l, k, simpath_spread_method, back_trace, eta):
             if x in examined_nodes:
                 continue
             celf_q.remove(x)
-            theta_V_x_S = simpath_spread_method(graph, S | set([x]), eta, U)
-            theta_V_S_x = back_trace(x, eta, V_S, set())
+            theta_V_x_S = simpath_spread(graph, S | set([x]), eta, U)
+            theta_V_S_x = back_track(x, eta, V_S, set())
             theta_S_x = theta_V_x_S + theta_V_S_x
             margin_gain = theta_S_x - spd
             heapq.heappush(celf_q, (margin_gain, x))

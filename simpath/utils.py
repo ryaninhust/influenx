@@ -18,12 +18,14 @@ def write_celf_q(celf_q, path):
         celf_q_file.writelines('%f %s\n' % t for t in celf_q)
 
 
-def read_celf_q(path):
+def read_celf_q(path, selected_node_list):
     celf_q = []
     with open(path) as celf_q_file:
         for t in celf_q_file.readlines():
             celf_str = t.strip().split(' ')
-            celf_t = (float(celf_str[0]), celf_str[1])
+            celf_t = (float(celf_str[0]), int(celf_str[1]))
+            if celf_t[1] in selected_node_list:
+                continue
             celf_q.append(celf_t)
     heapq.heapify(celf_q)
     return celf_q
