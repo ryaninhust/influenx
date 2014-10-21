@@ -14,12 +14,12 @@ def find_max_degree_nodes(graph):
 def find_vertex_cover(graph):
     """Find vertex cover using max_degree pop"""
     vertex_cover = []
-    undirected_graph = nx.Graph(graph)
-    print(undirected_graph.edges())
-    while undirected_graph.edges():
+    undirected_graph = graph.to_undirected()
+    edges_count = len(undirected_graph.edges())
+    while edges_count:
         max_degree_node = find_max_degree_nodes(undirected_graph)
-        print(max_degree_node)
         vertex_cover.append(max_degree_node)
+        edges_count -= len(undirected_graph.neighbors(max_degree_node))
         undirected_graph.remove_node(max_degree_node)
     return set(vertex_cover)
 

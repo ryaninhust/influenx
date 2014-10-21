@@ -7,46 +7,53 @@ def cal_non_cover_spread(graph, non_cover_node, filter_result):
     spread = 1
     for out in out_neighbors:
         m = (graph.edge[non_cover_node][out]['weight'] *
-             filter_result[(non_cover_node, out)])
+             filter_result[non_cover_node][out])
         spread += m
     return spread
 
 
-def cal_simpath(graph, eta, l, k, simpath_spread_method, back_trace):
-    CELF_Q = []
+def init_simpath(graph, eta, simpath_spread_method, back_trace):
+    celf_q = []
     vertex_cover_set = find_vertex_cover(graph)
     V = set(graph.nodes())
     V_C = V - vertex_cover_set
-    global_result = {}
     filter_result = {}
 
     for u in vertex_cover_set:
         U = V_C & get_node_in_neighbors(u)
-        theta_u = simpath_spread_method(graph, set([u,]), eta, U)
-        global_result[u] = theta_u
-        for v in U:
-            theta_V_v_u = simpath_spread_method(graph, set([u,v]), eta, U)
-            filter_result[(v, u)] = theta_V_v_u
-        heapq.heappush(CELF_Q, (theta_u, u))
+        theta_u, filter_result[u]= simpath_spread_method(graph, set([u,]), eta, U)
+        heapq.heappush(celf_q, (theta_u, u))
 
     for v in V_C:
         theta_v = cal_non_cover_spread(graph, v, filter_result)
-        heapq.heappush(CELF_Q, (theta_v, v))
+        heapq.heappush(celf_q, (theta_v, v))
 
+    return celf_q
+
+
+def common_simpath(graph, celf_q, l, k, simpath_spread_method, back_trace, eta):
     S = set()
     spd = 0
+    V = set(graph.nodes())
 
+    examined_nodes = set()
     while len(S) < k:
-        U = [heapq.heappop(CELF_Q)[1] for i in range(l)]
         V_S = V - S
-
+        U = set(heapq.nlargest(l, celf_q))
+        if U[0] in examined_nodes:
+            celf_q.remove(U[0])
+            S.add(U[0][1])
+            examined_nodes = set()
+            continue
         for x in U:
+            if x in examined_nodes:
+                continue
+            celf_q.remove(x)
             theta_V_x_S = simpath_spread_method(graph, S | set([x]), eta, U)
             theta_V_S_x = back_trace(x, eta, V_S, set())
             theta_S_x = theta_V_x_S + theta_V_S_x
             margin_gain = theta_S_x - spd
-            heapq.heappush(CELF_Q, (margin_gain, x))
-        seed = heapq.heappop(CELF_Q)
-        S.add(seed[1])
+            heapq.heappush(celf_q, (margin_gain, x))
+            examined_nodes.add(x)
     return S
 
