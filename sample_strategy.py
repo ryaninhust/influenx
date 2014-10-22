@@ -42,11 +42,11 @@ if __name__ == '__main__':
 
     model, nodes_list = read_graph_with_status(nodes_file, edges_file, status_file)
     if float(time_limit_in_sec) >= 100:
-        celf_q = init_simpath(model.g, 0.1)
+        celf_q = init_simpath(model.g, 0.01)
     else:
         celf_q = read_celf_q('./networks/celf_q_test.txt', nodes_list)
 
-    selected_nodes_list = common_simpath(model.g, celf_q, 20, 10, 0.1)
+    selected_nodes_list = common_simpath(model.g, celf_q, 20, 10, 0.01)
     write_result(selected_nodes_list, selected_nodes_file)
 
 
