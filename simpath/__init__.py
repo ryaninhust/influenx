@@ -13,14 +13,16 @@ def cal_non_cover_spread(graph, non_cover_node, filter_result):
     return spread
 
 
-def init_simpath(graph, eta):
+def init_simpath(graph, eta, optimize=False):
     celf_q = []
     V = set(graph.nodes())
-    for v in V:
-        theta_v,_ = simpath_spread(set([v,]), eta, set(), graph)
-        heapq.heappush(celf_q, (theta_v, v))
 
-    '''
+    if not optimize:
+        for v in V:
+            theta_v,_ = simpath_spread(set([v,]), eta, set(), graph)
+            heapq.heappush(celf_q, (theta_v, v))
+        return celf_q
+
     vertex_cover_set = find_vertex_cover(graph)
     V_C = V - vertex_cover_set
     filter_result = {}
@@ -42,7 +44,6 @@ def init_simpath(graph, eta):
     for v in V_C:
         theta_v = cal_non_cover_spread(graph, v, filter_result)
         heapq.heappush(celf_q, (theta_v, v))
-    '''
 
     return celf_q
 

@@ -25,6 +25,7 @@ def back_track(u,eta,W,U,G):
     while Q:
         [Q,D,spd,pp,spd_dict] = forward(Q,D,spd,spd_dict,pp,eta,W,U,G,b,u)
         u = Q.pop()
+        D[u] = []
         #print ('D',u,spd,pp)
         if Q:   # When the Q is Null,stop the process
             v = Q[-1]
